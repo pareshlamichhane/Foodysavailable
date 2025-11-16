@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CartProvider, useCart } from './store/useCart';
-import { ProductProvider } from './store/useProduct'; // Add this
+import { AuthProvider } from './store/useAuth'; // Add this
 import Homepage from './pages/HomePage';
 import ProductDetail from './Components/ProductDetail';
 import Cart from './Components/Cart';
@@ -8,14 +8,19 @@ import Delivery from './Components/Delivery';
 import RestaurantProfile from './Components/RestaurantProfile';
 import UploadNewProduct from './Components/UploadNewProduct';
 import Header from './Components/Header';
+import { ProductProvider } from './store/useProduct';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
 
 export default function App() {
   return (
-    <ProductProvider> {/* Wrap with ProductProvider */}
-      <CartProvider>
-        <AppContent />
-      </CartProvider>
-    </ProductProvider>
+    <AuthProvider> {/* Add AuthProvider */}
+      <ProductProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </ProductProvider>
+    </AuthProvider>
   );
 }
 
@@ -33,7 +38,9 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header navigate={navigate} cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)} />
+      {currentPage !== 'signin' && currentPage !== 'signup' && (
+        <Header navigate={navigate} cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)} />
+      )}
       <main>
         {currentPage === 'home' && <Homepage navigate={navigate} />}
         {currentPage === 'product-detail' && <ProductDetail product={selectedProduct} navigate={navigate} />}
@@ -41,6 +48,8 @@ function AppContent() {
         {currentPage === 'delivery' && <Delivery navigate={navigate} />}
         {currentPage === 'restaurant' && <RestaurantProfile restaurant={selectedRestaurant} navigate={navigate} />}
         {currentPage === 'upload' && <UploadNewProduct navigate={navigate} />}
+        {currentPage === 'signin' && <SignIn navigate={navigate} />}
+        {currentPage === 'signup' && <SignUp navigate={navigate} />}
       </main>
     </div>
   );
