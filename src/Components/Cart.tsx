@@ -1,20 +1,21 @@
 import { ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
 import { useCart } from '../store/useCart';
+import { useNavigate } from 'react-router-dom';
 
-export default function Cart({ navigate }: any) {
+export default function Cart() {
   const { cart, removeFromCart, updateQuantity } = useCart();
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryFee = 3.99;
   const total = subtotal + deliveryFee;
-
+  const navigate = useNavigate();
   if (cart.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
         <ShoppingCart size={64} className="mx-auto text-gray-400 mb-4" />
         <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
         <p className="text-gray-600 mb-6">Add some delicious food to get started!</p>
-        <button onClick={() => navigate('home')} className="bg-orange-600 text-white px-6 py-3 rounded-lg">
+        <button onClick={() => navigate('/')} className="bg-orange-600 text-white px-6 py-3 rounded-lg">
           Browse Menu
         </button>
       </div>

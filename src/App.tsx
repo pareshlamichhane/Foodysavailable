@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { CartProvider, useCart } from './store/useCart';
 import { AuthProvider } from './store/useAuth';
 import Homepage from './pages/HomePage';
@@ -17,50 +17,45 @@ import ResetPassword from './pages/ResetPassword';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ProductProvider>
-        <CartProvider>
-          <AppContent />
-        </CartProvider>
-      </ProductProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <ProductProvider>
+          <CartProvider>
+            <AppContent />
+          </CartProvider>
+        </ProductProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
 function AppContent() {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
-  const [pageData, setPageData] = useState<any>(null);
+  const location = useLocation();
   const { cart } = useCart();
 
-  const navigate = (page: string, data: any = null) => {
-    setCurrentPage(page);
-    setPageData(data);
-    if (page === 'product-detail') setSelectedProduct(data);
-    if (page === 'restaurant') setSelectedRestaurant(data);
-  };
-
-  const authPages = ['signin', 'signup', 'forgot-password', 'verify-otp', 'reset-password'];
-  const showHeader = !authPages.includes(currentPage);
+  // Determine if we should show the header based on the current path
+  const authPaths = ['/signin', '/signup', '/forgot-password', '/verify-otp', '/reset-password'];
+  const showHeader = !authPaths.includes(location.pathname);
 
   return (
     <div className="min-h-screen bg-gray-50">
       {showHeader && (
-        <Header navigate={navigate} cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)} />
+        <Header cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)} />
       )}
       <main>
-        {currentPage === 'home' && <Homepage navigate={navigate} />}
-        {currentPage === 'product-detail' && <ProductDetail product={selectedProduct} navigate={navigate} />}
-        {currentPage === 'cart' && <Cart navigate={navigate} />}
-        {currentPage === 'delivery' && <Delivery navigate={navigate} />}
-        {currentPage === 'restaurant' && <RestaurantProfile restaurant={selectedRestaurant} navigate={navigate} />}
-        {currentPage === 'upload' && <UploadNewProduct navigate={navigate} />}
-        {currentPage === 'signin' && <SignIn navigate={navigate} />}
-        {currentPage === 'signup' && <SignUp navigate={navigate} />}
-        {currentPage === 'forgot-password' && <ForgotPassword navigate={navigate} />}
-        {currentPage === 'verify-otp' && <VerifyOTP navigate={navigate} email={pageData?.email} />}
-        {currentPage === 'reset-password' && <ResetPassword navigate={navigate} email={pageData?.email} />}
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/delivery" element={<Delivery />} />
+          <Route path="/restaurant/:id" element={<RestaurantProfile />} />
+          <Route path="/upload" element={<UploadNewProduct />} />
+          <Route path="/login" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+        </Routes>
       </main>
     </div>
   );

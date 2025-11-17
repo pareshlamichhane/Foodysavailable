@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useCart } from "../store/useCart";
 
 export default function Delivery({ navigate }) {
   const { cart } = useCart();

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import useAuth from '../store/useAuth';
+import { useNavigate } from 'react-router-dom';
 
-export default function SignUp({ navigate }: any) {
+export default function SignUp() {
   const { signup } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
@@ -10,6 +11,7 @@ export default function SignUp({ navigate }: any) {
     password: '',
     confirmPassword: ''
   });
+  const navigate = useNavigate(); 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
@@ -32,7 +34,7 @@ export default function SignUp({ navigate }: any) {
     const success = signup(formData.name, formData.email, formData.password);
     
     if (success) {
-      navigate('home');
+      navigate('/');
     } else {
       setError('Email already registered');
     }
@@ -142,7 +144,7 @@ export default function SignUp({ navigate }: any) {
             <p className="text-gray-600">
               Already have an account?{' '}
               <button
-                onClick={() => navigate('signin')}
+                onClick={() => navigate('/login')}
                 className="text-orange-600 font-semibold hover:underline"
               >
                 Sign In
@@ -153,7 +155,7 @@ export default function SignUp({ navigate }: any) {
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => navigate('home')}
+            onClick={() => navigate('/')}
             className="text-gray-600 hover:text-orange-600 text-sm"
           >
             ← Continue as Guest
